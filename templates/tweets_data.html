@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+  <script src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <p class="text-xl-center"><h2>Mark Tweets <br><small>To collect training set data </small></h2><p>
+  </div>
+  <div class="container table-responsive">
+    <table id="example" class="display table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th class="col-lg-1 well well-lg">TweetId</th>
+          <th class="col-lg-1 well well-lg">Twitter Handle</th>
+          <th class="col-lg-6 well well-lg">Tweet Text</th>
+          <th class="col-lg-2 well well-lg">Machine Prediction</th>
+          <th class="col-lg-2 well well-lg">is_training</th>
+          <th class="col-lg-2 well well-lg">
+            <div class="col-lg-6 well well-sm">True</div>
+            <div class="col-lg-6 well well-sm">False</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody> {% for result in data %}
+        <tr>
+
+          <td>{{result.data_tweet_id}}</td>
+          <td>{{result.data_screen_name}}</td>
+          <td>{{result.tweet_text}} </td>
+          <td>{{result.machine_label}}</td>
+
+          <td>
+         
+          {{result.is_training}}
+            
+            
+
+
+           
+
+          </td>
+          <td>
+            <div style="float:left"><input class="check_class" type="radio" name={{result.id}} value="True" class="list_id" /></div>
+            <div style="float:right"> <input type="radio" class="check_class" name={{result.id}} value="False" class="list_id" /> </div>
+          </td>
+        </tr> {% endfor %} </tbody>
+    </table> <button type="button" id="submit" class="btn btn-success">Submit</button> </div>
+  <script>
+    $(document).ready(function ()
+    {
+      $("#submit").click(function ()
+      {
+        var allVals = [];
+        $('.check_class').each(function ()
+        {
+          if ($(this).is(':checked'))
+          {
+            var data = {}
+            allVals.push(
+            {
+              "id": $(this).attr('name'),
+              "is_training": $(this).val()
+            })
+          }
+        });
+        console.log(allVals)
+        $.ajax(
+        {
+          url: "/alter_training_status",
+          type: "POST",
+          data: JSON.stringify(allVals),
+          dataType: "json",
+          success: function (result)
+          {
+            console.log(result)
+            // location.reload();
+          },
+          error: function (request, status, error)
+          {
+            // location.reload();
+          }
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>
